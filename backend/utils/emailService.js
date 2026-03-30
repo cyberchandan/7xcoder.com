@@ -62,6 +62,39 @@ export const sendWelcomeEmail = async (email) => {
   }
 };
 
+export const sendGoodbyeEmail = async (email) => {
+  const transporter = getTransporter();
+  if (!transporter) return;
+
+  const mailOptions = {
+    from: `"7xcoder" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: `You have been unsubscribed`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; color: #333;">
+        <div style="background-color: #666; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h1 style="color: white; margin: 0;">Unsubscribed Successfully</h1>
+        </div>
+        <div style="padding: 20px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px;">
+          <p>Hello,</p>
+          <p>We're writing to confirm that you have successfully unsubscribed from <strong>7xcoder updates</strong>.</p>
+          <p>Your email address has been safely removed from our mailing list. You will no longer receive any new blog posts or career notifications moving forward, until you decide to subscribe again.</p>
+          <p>We're sorry to see you go and wish you the best!</p>
+          <br/>
+          <p>Best Regards,<br/><strong>The 7xcoder Team</strong></p>
+        </div>
+      </div>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Goodbye email sent to ${email}`);
+  } catch (err) {
+    console.error(`❌ Failed to send goodbye email to ${email}:`, err.message);
+  }
+};
+
 export const sendMassAlertEmail = async (subscribers, type, item) => {
   const transporter = getTransporter();
   if (!transporter || !subscribers || subscribers.length === 0) return;
@@ -69,8 +102,7 @@ export const sendMassAlertEmail = async (subscribers, type, item) => {
   const typeName = type === 'blog' ? 'Blog Post' : 'Career Opportunity';
   const prefix = type === 'blog' ? '📝 New Post' : '💼 New Job';
 
-  for (const subscriber of subscribers) {
-    // Generate individual unsubscribe URLs
+  const emailPromises = subscribers.map(subscriber => {
     const unsubscribeUrl = getUnsubscribeUrl(subscriber.email);
 
     const mailOptions = {
@@ -99,11 +131,11 @@ export const sendMassAlertEmail = async (subscribers, type, item) => {
       `
     };
 
-    try {
-      await transporter.sendMail(mailOptions);
-    } catch (err) {
+    return transporter.sendMail(mailOptions).catch(err => {
       console.error(`❌ Failed to send alert email to ${subscriber.email}:`, err.message);
-    }
-  }
-  console.log(`✅ Mass alert distributed for ${item.title}`);
+    });
+  });
+
+  await Promise.all(emailPromises);
+  console.log(`✅ Mass alert distributed concurrently for ${item.title}`);
 };

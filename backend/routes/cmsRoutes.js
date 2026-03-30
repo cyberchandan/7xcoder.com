@@ -6,7 +6,7 @@ import fs from 'fs';
 import Blog from '../models/Blog.js';
 import Career from '../models/Career.js';
 import Subscriber from '../models/Subscriber.js';
-import { sendWelcomeEmail, sendMassAlertEmail } from '../utils/emailService.js';
+import { sendWelcomeEmail, sendMassAlertEmail, sendGoodbyeEmail } from '../utils/emailService.js';
 
 const router = express.Router();
 
@@ -202,12 +202,16 @@ router.get('/unsubscribe', async (req, res) => {
     const decoded = jwt.verify(token, secret);
     
     if (decoded && decoded.email) {
-      await Subscriber.findOneAndUpdate({ email: decoded.email }, { isSubscribed: false });
+      await Subscriber.findOneAndDelete({ email: decoded.email });
+      
+      // Fire goodbye email
+      await sendGoodbyeEmail(decoded.email);
+
       return res.status(200).send(`
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; text-align: center; color: #333;">
-          <h1 style="color: #0b5edd;">Unsubscribed Successfully</h1>
-          <p>You have been removed from our active mailing list. You will no longer receive new blog or career alerts.</p>
-          <p>We're sorry to see you go! If this was a mistake, you can re-subscribe on our website anytime.</p>
+          <h1 style="color: #666;">Unsubscribed Successfully</h1>
+          <p>You have been completely removed from our active mailing list. You will no longer receive new blog or career alerts.</p>
+          <p>We're sorry to see you go! A confirmation email has been dispatched to your inbox. If this was a mistake, you can re-subscribe on our website anytime.</p>
           <a href="https://7xcoder.com" style="display: inline-block; margin-top: 20px; background: #0b5edd; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Return to 7xcoder</a>
         </div>
       `);
