@@ -18,8 +18,11 @@ const getTransporter = () => {
 const getUnsubscribeUrl = (email) => {
   const secret = process.env.JWT_SECRET || 'fallback_secret';
   const token = jwt.sign({ email }, secret, { expiresIn: '3650d' }); // 10 years valid token
-  // Directly point to the Vercel Backend URL to prevent frontend routing from swallowing the /api request
-  const baseUrl = process.env.BACKEND_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5000');
+  // Directly point to the Vercel Production Backend URL to bypass Vercel Authentication on mobile
+  const vercelProdUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : null;
+  const cleanVercelFallback = 'https://7xcoder-com-backend.vercel.app';
+  
+  const baseUrl = process.env.BACKEND_URL || vercelProdUrl || cleanVercelFallback;
   return `${baseUrl}/api/unsubscribe/${token}`;
 };
 
