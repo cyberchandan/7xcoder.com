@@ -5,6 +5,11 @@ import blogImg1 from "../../assets/blog/images/blog_1.png";
 import { useState } from "react";
 
 const getBackendUrl = () => import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const getImageUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("data:") || url.startsWith("http")) return url;
+  return `${getBackendUrl()}${url}`;
+};
 
 import icon1 from "../../assets/blog/images/icon01.png";
 import icon2 from "../../assets/blog/images/icon02.png";
@@ -89,7 +94,7 @@ const Service3_2 = ({ olderBlogs = [] }) => {
                 <div className="blog-card-sb1-blog" key={blog._id || blog.id}>
                   <div className="blog-img-container-sb1-blog">
                     <img
-                      src={blog.imageUrl ? `${getBackendUrl()}${blog.imageUrl}` : (blog.image || blogImg1)}
+                      src={blog.imageUrl ? getImageUrl(blog.imageUrl) : (blog.image || blogImg1)}
                       alt={blog.title}
                       className="fit-image"
                       onError={(e) => {
@@ -141,7 +146,7 @@ const Service3_2 = ({ olderBlogs = [] }) => {
             </button>
             {selectedBlog.imageUrl && (
               <img
-                src={`${getBackendUrl()}${selectedBlog.imageUrl}`}
+                src={getImageUrl(selectedBlog.imageUrl)}
                 alt={selectedBlog.title}
                 className="blog-modal-image"
                 onError={(e) => {

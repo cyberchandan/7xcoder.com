@@ -4,6 +4,11 @@ import arrow from "../../assets/business-software-solutions/icon/arrow1.png";
 import "./career.css";
 
 const getBackendUrl = () => import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+const getImageUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("data:") || url.startsWith("http")) return url;
+  return `${getBackendUrl()}${url}`;
+};
 
 const Career = () => {
   const [posts, setPosts] = useState([]);
@@ -42,7 +47,7 @@ const Career = () => {
                 {job.imageUrl && (
                   <div className="career-img-container-sb1-career">
                     <img
-                      src={`${getBackendUrl()}${job.imageUrl}`}
+                      src={getImageUrl(job.imageUrl)}
                       alt={job.title}
                       className="fit-image"
                       onError={(e) => {
@@ -133,7 +138,7 @@ const Career = () => {
             )}
             {selected.imageUrl && (
               <img 
-                src={`${getBackendUrl()}${selected.imageUrl}`} 
+                src={getImageUrl(selected.imageUrl)} 
                 alt="" 
                 onError={(e) => {
                   e.target.style.display = 'none';

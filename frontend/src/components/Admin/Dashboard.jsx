@@ -5,6 +5,11 @@ import "./admin.css";
 
 const Dashboard = () => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+  const getImageUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("data:") || url.startsWith("http")) return url;
+    return `${backendUrl}${url}`;
+  };
   const [mode, setMode] = useState("blogs"); // or "careers"
   const [items, setItems] = useState([]);
   const [editing, setEditing] = useState(null);
@@ -142,7 +147,7 @@ const Dashboard = () => {
       setRequirements(item.requirements || "");
     }
     setImage(null);
-    setImagePreview(item.imageUrl ? `${backendUrl}${item.imageUrl}` : null);
+    setImagePreview(getImageUrl(item.imageUrl));
     setErrors({});
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -557,7 +562,7 @@ const Dashboard = () => {
                     {item.imageUrl && (
                       <div className="card-image">
                         <img 
-                          src={`${backendUrl}${item.imageUrl}`} 
+                          src={getImageUrl(item.imageUrl)} 
                           alt={item.title} 
                           onError={(e) => {
                             e.target.style.display = 'none';
