@@ -52,9 +52,8 @@ router.post('/blogs', auth, upload.single('image'), async (req, res, next) => {
     await blog.save();
 
     // Trigger mass email asynchronously
-    Subscriber.find({ isSubscribed: true }).then(activeSubs => {
-      sendMassAlertEmail(activeSubs, 'blog', { title, description });
-    }).catch(err => console.error("Error fetching subscribers for mass email:", err));
+    const activeSubs = await Subscriber.find({ isSubscribed: true });
+    await sendMassAlertEmail(activeSubs, 'blog', { title, description });
 
     res.status(201).json(blog);
   } catch (error) {
@@ -112,10 +111,9 @@ router.post('/careers', auth, upload.single('image'), async (req, res, next) => 
     const career = new Career({ title, description, date, location, requirements, imageUrl });
     await career.save();
 
-    // Trigger mass email asynchronously
-    Subscriber.find({ isSubscribed: true }).then(activeSubs => {
-      sendMassAlertEmail(activeSubs, 'career', { title, description, location });
-    }).catch(err => console.error("Error fetching subscribers for mass email:", err));
+    // Trigger mass email synchronously
+    const activeSubs = await Subscriber.find({ isSubscribed: true });
+    await sendMassAlertEmail(activeSubs, 'career', { title, description, location });
 
     res.status(201).json(career);
   } catch (error) {
@@ -164,8 +162,8 @@ router.post('/subscribe', async (req, res, next) => {
       if (!existingSubscriber.isSubscribed) {
         existingSubscriber.isSubscribed = true;
         await existingSubscriber.save();
-        // Fire welcome email asynchronously
-        sendWelcomeEmail(email);
+        // Fire welcome email synchronously
+        await sendWelcomeEmail(email);
         return res.status(200).json({ success: true, message: 'Welcome back! You have re-subscribed.' });
       }
       return res.status(200).json({ success: true, message: 'Already subscribed' });
@@ -174,8 +172,8 @@ router.post('/subscribe', async (req, res, next) => {
     const newSubscriber = new Subscriber({ email });
     await newSubscriber.save();
     
-    // Fire welcome email asynchronously
-    sendWelcomeEmail(email);
+    // Fire welcome email synchronously
+    await sendWelcomeEmail(email);
     
     res.status(201).json({ success: true, message: 'Subscribed successfully' });
   } catch (error) {

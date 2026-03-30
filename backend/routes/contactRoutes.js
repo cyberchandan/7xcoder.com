@@ -5,16 +5,8 @@ import Contact from '../models/Contact.js';
 const router = express.Router();
 
 router.post('/', async (req, res) => {
-  // 1. Immediately acknowledge the lead to the client for lightning fast (milliseconds) UI response
-  res.status(200).json({ 
-    success: true, 
-    message: 'Message received! We will get back to you soon.' 
-  });
-
-  // 2. Process everything else in the background so the user doesn't wait
   try {
     const { name, email, businessName, mobile, service, message } = req.body;
-
     // Background Database Save
     const saveToDb = async () => {
       try {
@@ -63,12 +55,18 @@ router.post('/', async (req, res) => {
       }
     };
 
-    // Execute background tasks concurrently without blocking
-    saveToDb();
-    sendEmail();
+    // Execute tasks concurrently and wait for them to finish before responding
+    // This is required in Vercel because returning the res.json() freezes the serverless Node instance!
+    await Promise.all([saveToDb(), sendEmail()]);
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Message received! We will get back to you soon.' 
+    });
 
   } catch (criticalError) {
-    console.error('❌ Critical Background Error:', criticalError);
+    console.error('❌ Critical Error:', criticalError);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
