@@ -6,6 +6,7 @@ import fs from 'fs';
 import Blog from '../models/Blog.js';
 import Career from '../models/Career.js';
 import Subscriber from '../models/Subscriber.js';
+import { sendWelcomeEmail, sendMassAlertEmail } from '../utils/emailService.js';
 
 const router = express.Router();
 
@@ -49,6 +50,12 @@ router.post('/blogs', auth, upload.single('image'), async (req, res, next) => {
     
     const blog = new Blog({ title, description, date, comments, imageUrl });
     await blog.save();
+
+    // Trigger mass email asynchronously
+    Subscriber.find({ isSubscribed: true }).then(activeSubs => {
+      sendMassAlertEmail(activeSubs, 'blog', { title, description });
+    }).catch(err => console.error("Error fetching subscribers for mass email:", err));
+
     res.status(201).json(blog);
   } catch (error) {
     res.status(400);
@@ -104,6 +111,12 @@ router.post('/careers', auth, upload.single('image'), async (req, res, next) => 
     
     const career = new Career({ title, description, date, location, requirements, imageUrl });
     await career.save();
+
+    // Trigger mass email asynchronously
+    Subscriber.find({ isSubscribed: true }).then(activeSubs => {
+      sendMassAlertEmail(activeSubs, 'career', { title, description, location });
+    }).catch(err => console.error("Error fetching subscribers for mass email:", err));
+
     res.status(201).json(career);
   } catch (error) {
     res.status(400);
@@ -148,11 +161,21 @@ router.post('/subscribe', async (req, res, next) => {
 
     const existingSubscriber = await Subscriber.findOne({ email });
     if (existingSubscriber) {
+      if (!existingSubscriber.isSubscribed) {
+        existingSubscriber.isSubscribed = true;
+        await existingSubscriber.save();
+        // Fire welcome email asynchronously
+        sendWelcomeEmail(email);
+        return res.status(200).json({ success: true, message: 'Welcome back! You have re-subscribed.' });
+      }
       return res.status(200).json({ success: true, message: 'Already subscribed' });
     }
 
     const newSubscriber = new Subscriber({ email });
     await newSubscriber.save();
+    
+    // Fire welcome email asynchronously
+    sendWelcomeEmail(email);
     
     res.status(201).json({ success: true, message: 'Subscribed successfully' });
   } catch (error) {
@@ -162,10 +185,40 @@ router.post('/subscribe', async (req, res, next) => {
 
 router.get('/subscribers', auth, async (req, res, next) => {
   try {
-    const subscribers = await Subscriber.find().sort({ date: -1 });
+    const subscribers = await Subscriber.find({ isSubscribed: true }).sort({ date: -1 });
     res.json(subscribers);
   } catch (error) {
     next(error);
+  }
+});
+
+// GET Unsubscribe endpoint without auth to allow users clicking from email
+router.get('/unsubscribe', async (req, res) => {
+  try {
+    const { token } = req.query;
+    if (!token) {
+      return res.status(400).send('<h1>Invalid Link</h1><p>Missing unsubscription token.</p>');
+    }
+
+    const secret = process.env.JWT_SECRET || 'fallback_secret';
+    const decoded = jwt.verify(token, secret);
+    
+    if (decoded && decoded.email) {
+      await Subscriber.findOneAndUpdate({ email: decoded.email }, { isSubscribed: false });
+      return res.status(200).send(`
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; text-align: center; color: #333;">
+          <h1 style="color: #0b5edd;">Unsubscribed Successfully</h1>
+          <p>You have been removed from our active mailing list. You will no longer receive new blog or career alerts.</p>
+          <p>We're sorry to see you go! If this was a mistake, you can re-subscribe on our website anytime.</p>
+          <a href="https://7xcoder.com" style="display: inline-block; margin-top: 20px; background: #0b5edd; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Return to 7xcoder</a>
+        </div>
+      `);
+    } else {
+      throw new Error("Invalid token payload");
+    }
+  } catch (error) {
+    console.error('Unsubscribe error:', error.message);
+    res.status(400).send('<h1>Error</h1><p>The unsubscription link is invalid or has expired.</p>');
   }
 });
 
