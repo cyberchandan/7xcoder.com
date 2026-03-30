@@ -22,19 +22,8 @@ const auth = (req, res, next) => {
   }
 };
 
-// Setup Multer for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(process.cwd(), 'uploads');
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
+// Setup Multer for image uploads (Memory storage for Vercel serverless)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // ---------------- BLOGS ---------------- 
@@ -51,7 +40,12 @@ router.get('/blogs', async (req, res, next) => {
 router.post('/blogs', auth, upload.single('image'), async (req, res, next) => {
   try {
     const { title, description, date, comments } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    let imageUrl = '';
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const mimeType = req.file.mimetype;
+      imageUrl = `data:${mimeType};base64,${b64}`;
+    }
     
     const blog = new Blog({ title, description, date, comments, imageUrl });
     await blog.save();
@@ -66,7 +60,9 @@ router.put('/blogs/:id', auth, upload.single('image'), async (req, res, next) =>
   try {
     const updateData = { ...req.body };
     if (req.file) {
-      updateData.imageUrl = `/uploads/${req.file.filename}`;
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const mimeType = req.file.mimetype;
+      updateData.imageUrl = `data:${mimeType};base64,${b64}`;
     }
     const blog = await Blog.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(blog);
@@ -99,7 +95,12 @@ router.get('/careers', async (req, res, next) => {
 router.post('/careers', auth, upload.single('image'), async (req, res, next) => {
   try {
     const { title, description, date, location, requirements } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+    let imageUrl = '';
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const mimeType = req.file.mimetype;
+      imageUrl = `data:${mimeType};base64,${b64}`;
+    }
     
     const career = new Career({ title, description, date, location, requirements, imageUrl });
     await career.save();
@@ -114,7 +115,9 @@ router.put('/careers/:id', auth, upload.single('image'), async (req, res, next) 
   try {
     const updateData = { ...req.body };
     if (req.file) {
-      updateData.imageUrl = `/uploads/${req.file.filename}`;
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const mimeType = req.file.mimetype;
+      updateData.imageUrl = `data:${mimeType};base64,${b64}`;
     }
     const career = await Career.findByIdAndUpdate(req.params.id, updateData, { new: true });
     res.json(career);
