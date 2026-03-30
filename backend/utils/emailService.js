@@ -18,9 +18,9 @@ const getTransporter = () => {
 const getUnsubscribeUrl = (email) => {
   const secret = process.env.JWT_SECRET || 'fallback_secret';
   const token = jwt.sign({ email }, secret, { expiresIn: '3650d' }); // 10 years valid token
-  // Use frontend URL, fallback to backend if missing
-  const baseUrl = process.env.FRONTEND_URL || import.meta.env?.VITE_BACKEND_URL || 'https://7xcoder.com';
-  return `${baseUrl.includes('api') ? 'https://7xcoder.com' : baseUrl}/api/unsubscribe?token=${token}`;
+  // Directly point to the Vercel Backend URL to prevent frontend routing from swallowing the /api request
+  const baseUrl = process.env.BACKEND_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5000');
+  return `${baseUrl}/api/unsubscribe?token=${token}`;
 };
 
 export const sendWelcomeEmail = async (email) => {
