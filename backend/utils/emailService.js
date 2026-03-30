@@ -20,7 +20,7 @@ const getUnsubscribeUrl = (email) => {
   const token = jwt.sign({ email }, secret, { expiresIn: '3650d' }); // 10 years valid token
   // Directly point to the Vercel Backend URL to prevent frontend routing from swallowing the /api request
   const baseUrl = process.env.BACKEND_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5000');
-  return `${baseUrl}/api/unsubscribe?token=${token}`;
+  return `${baseUrl}/api/unsubscribe/${token}`;
 };
 
 export const sendWelcomeEmail = async (email) => {

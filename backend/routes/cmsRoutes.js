@@ -191,9 +191,9 @@ router.get('/subscribers', auth, async (req, res, next) => {
 });
 
 // GET Unsubscribe endpoint without auth to allow users clicking from email
-router.get('/unsubscribe', async (req, res) => {
+router.get('/unsubscribe/:token', async (req, res) => {
   try {
-    const { token } = req.query;
+    const token = req.params.token;
     if (!token) {
       return res.status(400).send('<h1>Invalid Link</h1><p>Missing unsubscription token.</p>');
     }
