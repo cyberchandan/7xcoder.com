@@ -34,8 +34,13 @@ export const sendWelcomeEmail = async (email) => {
 
   const mailOptions = {
     from: `"7xcoder" <${process.env.EMAIL_USER}>`,
+    replyTo: process.env.EMAIL_USER,
     to: email,
     subject: `Welcome to 7xcoder Updates! 🎉`,
+    headers: {
+      'List-Unsubscribe': `<${unsubscribeUrl}>`
+    },
+    text: `Welcome to 7xcoder!\n\nYour Digital Marketing & Software Partner\n\nHello there,\nThank you for subscribing to our updates! We are absolutely thrilled to have you join our digital community.\n\nAbout 7xcoder:\nWe are a premier software agency providing top-tier digital marketing, custom web and app development, branding, graphic design, and innovative creative services. Our core mission is to empower every digital move you make and drive scalable, measurable growth for your business.\n\nVisit Our Website: https://7xcoder.com/\n\nYou will now receive our latest Blog Posts featuring digital marketing insights, alongside exciting Career Opportunities as soon as they are published. Stay tuned for amazing content!\n\nBest Regards,\nThe 7xcoder Team\n\nIf you change your mind, you can unsubscribe from this list at any time: ${unsubscribeUrl}`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -113,8 +118,10 @@ export const sendGoodbyeEmail = async (email) => {
 
   const mailOptions = {
     from: `"7xcoder" <${process.env.EMAIL_USER}>`,
+    replyTo: process.env.EMAIL_USER,
     to: email,
     subject: `You have been unsubscribed`,
+    text: `Unsubscribed Successfully\n\nHello,\n\nWe're writing to confirm that you have successfully unsubscribed from 7xcoder updates.\n\nYour email address has been safely removed from our mailing list. You will no longer receive any new blog posts or career notifications moving forward, until you decide to subscribe again.\n\nWe're sorry to see you go and wish you the best!\n\nBest Regards,\nThe 7xcoder Team`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; color: #333;">
         <div style="background-color: #666; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -152,8 +159,13 @@ export const sendMassAlertEmail = async (subscribers, type, item) => {
 
     const mailOptions = {
       from: `"7xcoder" <${process.env.EMAIL_USER}>`,
+      replyTo: process.env.EMAIL_USER,
       to: subscriber.email,
       subject: `${prefix}: ${item.title}`,
+      headers: {
+        'List-Unsubscribe': `<${unsubscribeUrl}>`
+      },
+      text: `New ${typeName} at 7xcoder!\n\n${item.title}\n\n${item.description}\n\nView Details: https://7xcoder.com/${type === 'blog' ? 'blog' : 'careers'}\n\nBest Regards,\nThe 7xcoder Team\n\nYou are receiving this because you subscribed to updates. Unsubscribe here: ${unsubscribeUrl}`,
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; color: #333;">
           <div style="background-color: #0b5edd; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
@@ -201,8 +213,15 @@ export const sendBulkWelcomeEmail = async (emails, subject, customMessage) => {
 
     const mailOptions = {
       from: `"7xcoder" <${process.env.EMAIL_USER}>`,
+      replyTo: process.env.EMAIL_USER,
       to: email,
       subject: subject || `Welcome to 7xcoder Updates! 🎉`,
+      headers: {
+        'List-Unsubscribe': `<${unsubscribeUrl}>`
+      },
+      text: customMessage 
+        ? `${customMessage.replace(/<[^>]*>?/gm, '')}\n\nVisit Our Website: https://7xcoder.com/\n\nIf you change your mind, you can unsubscribe from this list at any time: ${unsubscribeUrl}` 
+        : `Welcome to 7xcoder!\n\nYour Digital Marketing & Software Partner\n\nHello there,\nThank you for subscribing to our updates! We are absolutely thrilled to have you join our digital community.\n\nVisit Our Website: https://7xcoder.com/\n\nIf you change your mind, you can unsubscribe from this list at any time: ${unsubscribeUrl}`,
       html: `
         <!DOCTYPE html>
         <html>
