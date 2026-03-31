@@ -45,6 +45,7 @@ import AdminDashboard from "./components/Admin/Dashboard";
 
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop";
 import CursorGlow from "./components/CursorGlow/CursorGlow";
+import WhatsappPopup from "./components/WhatsappPopup/WhatsappPopup";
 // import PayPerClick from "./components/Services/DigitalMarketingService/PayPerClick/PayPerClick";
 // import WebAndAppDevelopment from "./components/Services/DigitalMarketingService/WebAndAppDevelopment/WebAndAppDevelopment";
 // import SEOAndContentWriting from "./components/Services/DigitalMarketingService/SEOAndContentWriting/SEO";
@@ -162,6 +163,7 @@ function AppContent() {
     <>
       <ScrollToTop />
       <CursorGlow />
+      <WhatsappPopup />
       <Header className="main-header" />
 
       <Routes>
