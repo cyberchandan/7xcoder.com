@@ -23,6 +23,9 @@ const Dashboard = () => {
   const [requirements, setRequirements] = useState("");
   const [githubLink, setGithubLink] = useState("");
   const [liveLink, setLiveLink] = useState("");
+  const [emailsText, setEmailsText] = useState("");
+  const [subject, setSubject] = useState("");
+  const [customMessage, setCustomMessage] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [message, setMessage] = useState("");
@@ -118,10 +121,13 @@ const Dashboard = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!title.trim()) {
+    if (mode !== "subscribers" && !title.trim()) {
       newErrors.title = "Title is required";
     }
-    if (mode !== "live-projects" && !description.trim()) {
+    if (mode === "subscribers" && !emailsText.trim()) {
+      newErrors.emailsText = "Please provide at least one email";
+    }
+    if (mode !== "live-projects" && mode !== "subscribers" && !description.trim()) {
       newErrors.description = "Description is required";
     }
     if (mode === "careers" && !location.trim()) {
@@ -168,6 +174,9 @@ const Dashboard = () => {
     setRequirements("");
     setGithubLink("");
     setLiveLink("");
+    setEmailsText("");
+    setSubject("");
+    setCustomMessage("");
     setImage(null);
     setImagePreview(null);
     setEditing(null);
@@ -215,6 +224,9 @@ const Dashboard = () => {
       Authorization: `Bearer ${token}`,
     };
 
+    let url = `${backendUrl}/api/${mode}${editing ? `/${editing._id}` : ""}`;
+    let method = editing ? "PUT" : "POST";
+
     if (mode === "live-projects") {
       headersData["Content-Type"] = "application/json";
       bodyData = JSON.stringify({
@@ -222,6 +234,15 @@ const Dashboard = () => {
         githubLink,
         liveLink
       });
+    } else if (mode === "subscribers") {
+      headersData["Content-Type"] = "application/json";
+      const emailArray = emailsText.split(/[\n,]+/).map(e => e.trim()).filter(e => e);
+      bodyData = JSON.stringify({
+        emails: emailArray,
+        subject,
+        customMessage
+      });
+      url = `${backendUrl}/api/subscribers/bulk`;
     } else {
       const form = new FormData();
       form.append("title", title);
@@ -237,8 +258,6 @@ const Dashboard = () => {
     }
 
     try {
-      const url = `${backendUrl}/api/${mode}${editing ? `/${editing._id}` : ""}`;
-      const method = editing ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
         headers: headersData,
@@ -315,6 +334,21 @@ const Dashboard = () => {
               </button>
             </div>
           </div>
+          <div className="admin-nav-section">
+            <h3>Community</h3>
+            <div className="admin-tabs-vertical">
+              <button
+                className={`admin-tab-btn ${mode === "subscribers" ? "active" : ""}`}
+                onClick={() => {
+                  setMode("subscribers");
+                  setShowForm(false);
+                  handleReset();
+                }}
+              >
+                📢 Bulk Campaigns
+              </button>
+            </div>
+          </div>
 
           <div className="admin-nav-section">
             <button
@@ -384,39 +418,90 @@ const Dashboard = () => {
                 encType="multipart/form-data"
                 className="admin-form"
               >
-                <div className="form-row">
+                  {mode === "subscribers" && (
                   <div className="form-group">
-                    <label htmlFor="title">
-                      Title *{" "}
-                      {errors.title && (
-                        <span className="error-text">{errors.title}</span>
+                    <label htmlFor="emailsText">
+                      Email Addresses (Comma Configured or New Lines) *{" "}
+                      {errors.emailsText && (
+                        <span className="error-text">{errors.emailsText}</span>
                       )}
                     </label>
-                    <input
-                      id="title"
-                      type="text"
-                      value={title}
+                    <textarea
+                      id="emailsText"
+                      value={emailsText}
                       onChange={(e) => {
-                        setTitle(e.target.value);
+                        setEmailsText(e.target.value);
                         if (e.target.value.trim())
-                          setErrors((prev) => ({ ...prev, title: "" }));
+                          setErrors((prev) => ({ ...prev, emailsText: "" }));
                       }}
-                      placeholder="Enter title"
-                      className={errors.title ? "input-error" : ""}
+                      placeholder="john@example.com, jane@example.com\nadmin@company.com"
+                      rows="4"
+                      className={errors.emailsText ? "input-error" : ""}
                     />
                   </div>
+                )}
+                
+                {mode === "subscribers" && (
                   <div className="form-group">
-                    <label htmlFor="date">Date</label>
+                    <label htmlFor="subject">Subject Length (Optional)</label>
                     <input
-                      id="date"
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
+                      id="subject"
+                      type="text"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      placeholder="Custom Subject for Email Campaign (leave empty for Welcome Default)"
                     />
                   </div>
-                </div>
+                )}
 
-                {mode !== "live-projects" && (
+                {mode === "subscribers" && (
+                  <div className="form-group">
+                    <label htmlFor="customMessage">Custom HTML or Text Message (Optional)</label>
+                    <textarea
+                      id="customMessage"
+                      value={customMessage}
+                      onChange={(e) => setCustomMessage(e.target.value)}
+                      placeholder="Write your email body message here... It will adapt to our beautiful email template!"
+                      rows="5"
+                    />
+                  </div>
+                )}
+
+                {mode !== "subscribers" && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="title">
+                        Title *{" "}
+                        {errors.title && (
+                          <span className="error-text">{errors.title}</span>
+                        )}
+                      </label>
+                      <input
+                        id="title"
+                        type="text"
+                        value={title}
+                        onChange={(e) => {
+                          setTitle(e.target.value);
+                          if (e.target.value.trim())
+                            setErrors((prev) => ({ ...prev, title: "" }));
+                        }}
+                        placeholder="Enter title"
+                        className={errors.title ? "input-error" : ""}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="date">Date</label>
+                      <input
+                        id="date"
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {mode !== "live-projects" && mode !== "subscribers" && (
                   <div className="form-group">
                     <label htmlFor="description">
                       Description *{" "}
@@ -520,7 +605,7 @@ const Dashboard = () => {
                 )}
 
                 {/* Image Upload Section */}
-                {mode !== "live-projects" && (
+                {mode !== "live-projects" && mode !== "subscribers" && (
                   <div className="form-group">
                     <label>
                     Image{" "}
@@ -633,7 +718,7 @@ const Dashboard = () => {
                       </div>
                     )}
                     <div className="card-content">
-                      <h3>{item.title}</h3>
+                      <h3>{mode === "subscribers" ? item.email : item.title}</h3>
                       <p className="card-date">
                         📅 {new Date(item.date).toLocaleDateString()}
                       </p>
@@ -645,25 +730,30 @@ const Dashboard = () => {
                       {mode === "careers" && (
                         <p className="card-meta">📍 {item.location}</p>
                       )}
+                      {mode === "subscribers" && (
+                        <p className="card-meta">Status: {item.isSubscribed ? "Active" : "Unsubscribed"}</p>
+                      )}
                       {mode === "live-projects" && (
                         <>
                            {item.githubLink && <p className="card-meta">🔗 GitHub: <a href={item.githubLink} target="_blank" rel="noreferrer">View</a></p>}
                            {item.liveLink && <p className="card-meta">🌐 Live: <a href={item.liveLink} target="_blank" rel="noreferrer">View</a></p>}
                         </>
                       )}
-                      {mode !== "live-projects" && (
+                      {mode !== "live-projects" && mode !== "subscribers" && (
                         <p className="card-description">
                           {item.description.substring(0, 60)}...
                         </p>
                       )}
                     </div>
                     <div className="card-actions">
-                      <button
-                        className="btn-edit"
-                        onClick={() => handleEdit(item)}
-                      >
-                        ✏️ Edit
-                      </button>
+                      {mode !== "subscribers" && (
+                        <button
+                          className="btn-edit"
+                          onClick={() => handleEdit(item)}
+                        >
+                          ✏️ Edit
+                        </button>
+                      )}
                       <button
                         className="btn-delete"
                         onClick={() => handleDelete(item._id)}

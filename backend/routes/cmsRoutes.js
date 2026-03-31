@@ -7,7 +7,7 @@ import Blog from '../models/Blog.js';
 import Career from '../models/Career.js';
 import Subscriber from '../models/Subscriber.js';
 import LiveProject from '../models/LiveProject.js';
-import { sendWelcomeEmail, sendMassAlertEmail, sendGoodbyeEmail } from '../utils/emailService.js';
+import { sendWelcomeEmail, sendMassAlertEmail, sendGoodbyeEmail, sendBulkWelcomeEmail } from '../utils/emailService.js';
 
 const router = express.Router();
 
@@ -233,6 +233,69 @@ router.get('/subscribers', auth, async (req, res, next) => {
   try {
     const subscribers = await Subscriber.find({ isSubscribed: true }).sort({ date: -1 });
     res.json(subscribers);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Bulk subscriber addition / Custom campaign
+router.post('/subscribers/bulk', auth, async (req, res, next) => {
+  try {
+    const { emails, subject, customMessage } = req.body;
+    
+    if (!emails || !Array.isArray(emails) || emails.length === 0) {
+      return res.status(400).json({ success: false, message: 'No emails provided' });
+    }
+
+    const newSubscribers = [];
+    const emailsToSend = [];
+
+    for (const email of emails) {
+      const cleanEmail = email.trim().toLowerCase();
+      if (!cleanEmail) continue;
+      
+      const existingSubscriber = await Subscriber.findOne({ email: cleanEmail });
+      
+      if (!existingSubscriber) {
+        newSubscribers.push({ email: cleanEmail, isSubscribed: true });
+        // Make sure to add to sending list
+        if (!emailsToSend.includes(cleanEmail)) emailsToSend.push(cleanEmail);
+      } else if (!existingSubscriber.isSubscribed) {
+        existingSubscriber.isSubscribed = true;
+        await existingSubscriber.save();
+        if (!emailsToSend.includes(cleanEmail)) emailsToSend.push(cleanEmail);
+      } else {
+        // They are already subscribed. We still send them the campaign if they are in the list.
+        if (!emailsToSend.includes(cleanEmail)) emailsToSend.push(cleanEmail);
+      }
+    }
+
+    if (newSubscribers.length > 0) {
+      await Subscriber.insertMany(newSubscribers);
+    }
+
+    if (emailsToSend.length > 0) {
+      // Fire and forget email queue
+      sendBulkWelcomeEmail(emailsToSend, subject, customMessage);
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      message: `Successfully processed ${emailsToSend.length} email(s) for the campaign!` 
+    });
+  } catch (error) {
+    res.status(500);
+    next(error);
+  }
+});
+
+router.delete('/subscribers/:id', auth, async (req, res, next) => {
+  try {
+    const subscriber = await Subscriber.findByIdAndDelete(req.params.id);
+    if (!subscriber) {
+      return res.status(404).json({ message: 'Subscriber not found' });
+    }
+    res.json({ message: 'Deleted' });
   } catch (error) {
     next(error);
   }
