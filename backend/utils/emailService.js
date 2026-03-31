@@ -37,23 +37,65 @@ export const sendWelcomeEmail = async (email) => {
     to: email,
     subject: `Welcome to 7xcoder Updates! 🎉`,
     html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; color: #333;">
-        <div style="background-color: #0b5edd; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-          <h1 style="color: white; margin: 0;">Welcome to 7xcoder!</h1>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          @keyframes pulseBtn {
+            0% { transform: scale(1); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+          }
+          .animated-btn {
+            animation: pulseBtn 2.5s infinite ease-in-out;
+            display: inline-block;
+          }
+          .animated-btn:hover {
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.7) !important;
+          }
+        </style>
+      </head>
+      <body style="margin: 0; padding: 0; background-color: #f4f7f6;">
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; max-width: 600px; margin: 20px auto; color: #333; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+          
+          <div style="background: linear-gradient(135deg, #0b5edd 0%, #1e3a8a 100%); padding: 40px 20px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 28px; letter-spacing: 1px;">Welcome to 7xcoder!</h1>
+            <p style="color: #cbd5e1; margin-top: 10px; font-size: 16px; margin-bottom: 0;">Your Digital Marketing & Software Partner</p>
+          </div>
+
+          <div style="padding: 30px 40px;">
+            <p style="font-size: 16px; color: #334155;">Hello there,</p>
+            <p style="font-size: 16px; color: #334155; line-height: 1.6;">Thank you for subscribing to our updates! We are absolutely thrilled to have you join our digital community.</p>
+            
+            <div style="background-color: #f8fafc; padding: 20px 25px; border-left: 4px solid #0b5edd; margin: 25px 0; border-radius: 0 8px 8px 0;">
+              <h3 style="margin-top: 0; color: #0f172a; font-size: 18px;">About 7xcoder</h3>
+              <p style="margin-bottom: 0; color: #475569; line-height: 1.6; font-size: 15px;">
+                We are a premier software agency providing top-tier digital marketing, custom web and app development, branding, graphic design, and innovative creative services. Our core mission is to empower every digital move you make and drive scalable, measurable growth for your business.
+              </p>
+            </div>
+
+            <div style="text-align: center; margin: 40px 0;">
+               <div class="animated-btn">
+                 <a href="https://7xcoder.com/" style="display: inline-block; background: linear-gradient(45deg, #2563eb, #3b82f6); color: #ffffff; text-decoration: none; padding: 16px 40px; font-size: 16px; font-weight: bold; border-radius: 50px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); text-transform: uppercase; letter-spacing: 1.5px;">
+                   Visit Our Website
+                 </a>
+               </div>
+            </div>
+
+            <p style="font-size: 16px; color: #334155; line-height: 1.6;">You will now receive our latest <strong>Blog Posts</strong> featuring digital marketing insights, alongside exciting <strong>Career Opportunities</strong> as soon as they are published.</p>
+            <p style="font-size: 16px; color: #334155;">Stay tuned for amazing content!</p>
+            
+            <br/>
+            <p style="font-size: 16px; color: #334155;">Best Regards,<br/><strong style="color: #0b5edd;">The 7xcoder Team</strong></p>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+            <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 0;">
+              If you change your mind, you can <a href="${unsubscribeUrl}" style="color: #0b5edd; text-decoration: none;">unsubscribe from this list</a> at any time.
+            </p>
+          </div>
         </div>
-        <div style="padding: 20px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 8px 8px;">
-          <p>Hello there,</p>
-          <p>Thank you for subscribing to our updates! We are thrilled to have you here.</p>
-          <p>You will now receive our latest <strong>Blog Posts</strong> featuring digital marketing insights, and exciting <strong>Career Opportunities</strong> as soon as they are published.</p>
-          <p>Stay tuned for amazing content!</p>
-          <br/>
-          <p>Best Regards,<br/><strong>The 7xcoder Team</strong></p>
-          <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-          <p style="font-size: 12px; color: #888; text-align: center;">
-            If you change your mind, you can <a href="${unsubscribeUrl}" style="color: #0b5edd;">unsubscribe from this list</a> at any time.
-          </p>
-        </div>
-      </div>
+      </body>
+      </html>
     `
   };
 
