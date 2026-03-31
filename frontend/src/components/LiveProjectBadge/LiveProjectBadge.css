@@ -1,0 +1,164 @@
+/* Live Project Badge Styles */
+.live-project-container {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  z-index: 9998; /* Below WhatsApp popup if it overlaps, but generally on the opposite side */
+  pointer-events: none; /* Let clicks pass through if it overlaps something */
+  animation: slide-up-fade-in 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.live-project-glass {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  padding: 10px 20px 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(37, 211, 102, 0.05);
+  pointer-events: auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+}
+
+.live-project-glass:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25), 0 0 20px rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.live-indicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  position: relative;
+}
+
+.pulse-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background-color: #22c55e;
+  border-radius: 50%;
+  animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  z-index: -1;
+}
+
+.live-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.live-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.live-project-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #f8fafc;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.live-project-link {
+  color: #f8fafc;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.live-project-link:hover {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+@keyframes pulse-ring {
+  0% {
+    width: 8px;
+    height: 8px;
+    opacity: 1;
+  }
+  100% {
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+  }
+}
+
+@keyframes slide-up-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .live-project-container {
+    bottom: auto;
+    top: 80px; /* Below standard mobile header */
+    left: 50%;
+    transform: translateX(-50%);
+    animation: drop-down-fade-in 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+  }
+
+  @keyframes drop-down-fade-in {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .live-project-glass {
+    padding: 8px 16px 8px 12px;
+  }
+  
+  .live-project-title {
+    font-size: 12px;
+  }
+}

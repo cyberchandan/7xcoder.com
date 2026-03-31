@@ -21,6 +21,8 @@ const Dashboard = () => {
   const [comments, setComments] = useState(0);
   const [location, setLocation] = useState("");
   const [requirements, setRequirements] = useState("");
+  const [githubLink, setGithubLink] = useState("");
+  const [liveLink, setLiveLink] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [message, setMessage] = useState("");
@@ -119,7 +121,7 @@ const Dashboard = () => {
     if (!title.trim()) {
       newErrors.title = "Title is required";
     }
-    if (!description.trim()) {
+    if (mode !== "live-projects" && !description.trim()) {
       newErrors.description = "Description is required";
     }
     if (mode === "careers" && !location.trim()) {
@@ -146,6 +148,10 @@ const Dashboard = () => {
       setLocation(item.location || "");
       setRequirements(item.requirements || "");
     }
+    if (mode === "live-projects") {
+      setGithubLink(item.githubLink || "");
+      setLiveLink(item.liveLink || "");
+    }
     setImage(null);
     setImagePreview(getImageUrl(item.imageUrl));
     setErrors({});
@@ -160,6 +166,8 @@ const Dashboard = () => {
     setComments(0);
     setLocation("");
     setRequirements("");
+    setGithubLink("");
+    setLiveLink("");
     setImage(null);
     setImagePreview(null);
     setEditing(null);
@@ -201,27 +209,40 @@ const Dashboard = () => {
     }
 
     setIsLoading(true);
-    const form = new FormData();
-    form.append("title", title);
-    form.append("description", description);
-    form.append("date", date || new Date().toISOString().split("T")[0]);
-    if (mode === "blogs") form.append("comments", comments);
-    if (mode === "careers") {
-      form.append("location", location);
-      form.append("requirements", requirements);
-    }
-    if (image) form.append("image", image);
-
     const token = localStorage.getItem("adminToken");
+    let bodyData;
+    let headersData = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    if (mode === "live-projects") {
+      headersData["Content-Type"] = "application/json";
+      bodyData = JSON.stringify({
+        title,
+        githubLink,
+        liveLink
+      });
+    } else {
+      const form = new FormData();
+      form.append("title", title);
+      form.append("description", description);
+      form.append("date", date || new Date().toISOString().split("T")[0]);
+      if (mode === "blogs") form.append("comments", comments);
+      if (mode === "careers") {
+        form.append("location", location);
+        form.append("requirements", requirements);
+      }
+      if (image) form.append("image", image);
+      bodyData = form;
+    }
+
     try {
       const url = `${backendUrl}/api/${mode}${editing ? `/${editing._id}` : ""}`;
       const method = editing ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: form,
+        headers: headersData,
+        body: bodyData,
       });
       const data = await res.json();
       if (res.ok) {
@@ -281,6 +302,16 @@ const Dashboard = () => {
                 }}
               >
                 💼 Careers
+              </button>
+              <button
+                className={`admin-tab-btn ${mode === "live-projects" ? "active" : ""}`}
+                onClick={() => {
+                  setMode("live-projects");
+                  setShowForm(false);
+                  handleReset();
+                }}
+              >
+                🚀 Live Projects
               </button>
             </div>
           </div>
@@ -385,26 +416,28 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="description">
-                    Description *{" "}
-                    {errors.description && (
-                      <span className="error-text">{errors.description}</span>
-                    )}
-                  </label>
-                  <textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => {
-                      setDescription(e.target.value);
-                      if (e.target.value.trim())
-                        setErrors((prev) => ({ ...prev, description: "" }));
-                    }}
-                    placeholder="Enter detailed description"
-                    rows="4"
-                    className={errors.description ? "input-error" : ""}
-                  />
-                </div>
+                {mode !== "live-projects" && (
+                  <div className="form-group">
+                    <label htmlFor="description">
+                      Description *{" "}
+                      {errors.description && (
+                        <span className="error-text">{errors.description}</span>
+                      )}
+                    </label>
+                    <textarea
+                      id="description"
+                      value={description}
+                      onChange={(e) => {
+                        setDescription(e.target.value);
+                        if (e.target.value.trim())
+                          setErrors((prev) => ({ ...prev, description: "" }));
+                      }}
+                      placeholder="Enter detailed description"
+                      rows="4"
+                      className={errors.description ? "input-error" : ""}
+                    />
+                  </div>
+                )}
 
                 {mode === "blogs" && (
                   <div className="form-group">
@@ -459,9 +492,37 @@ const Dashboard = () => {
                   </>
                 )}
 
+                {mode === "live-projects" && (
+                  <>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label htmlFor="githubLink">GitHub Link</label>
+                        <input
+                          id="githubLink"
+                          type="url"
+                          value={githubLink}
+                          onChange={(e) => setGithubLink(e.target.value)}
+                          placeholder="https://github.com/..."
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="liveLink">Live Deploy Link</label>
+                        <input
+                          id="liveLink"
+                          type="url"
+                          value={liveLink}
+                          onChange={(e) => setLiveLink(e.target.value)}
+                          placeholder="https://example.com"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* Image Upload Section */}
-                <div className="form-group">
-                  <label>
+                {mode !== "live-projects" && (
+                  <div className="form-group">
+                    <label>
                     Image{" "}
                     {errors.image && (
                       <span className="error-text">{errors.image}</span>
@@ -518,6 +579,7 @@ const Dashboard = () => {
                     </div>
                   )}
                 </div>
+                )}
 
                 <div className="form-actions">
                   <button
@@ -583,9 +645,17 @@ const Dashboard = () => {
                       {mode === "careers" && (
                         <p className="card-meta">📍 {item.location}</p>
                       )}
-                      <p className="card-description">
-                        {item.description.substring(0, 60)}...
-                      </p>
+                      {mode === "live-projects" && (
+                        <>
+                           {item.githubLink && <p className="card-meta">🔗 GitHub: <a href={item.githubLink} target="_blank" rel="noreferrer">View</a></p>}
+                           {item.liveLink && <p className="card-meta">🌐 Live: <a href={item.liveLink} target="_blank" rel="noreferrer">View</a></p>}
+                        </>
+                      )}
+                      {mode !== "live-projects" && (
+                        <p className="card-description">
+                          {item.description.substring(0, 60)}...
+                        </p>
+                      )}
                     </div>
                     <div className="card-actions">
                       <button

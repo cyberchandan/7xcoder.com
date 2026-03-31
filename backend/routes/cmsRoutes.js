@@ -6,6 +6,7 @@ import fs from 'fs';
 import Blog from '../models/Blog.js';
 import Career from '../models/Career.js';
 import Subscriber from '../models/Subscriber.js';
+import LiveProject from '../models/LiveProject.js';
 import { sendWelcomeEmail, sendMassAlertEmail, sendGoodbyeEmail } from '../utils/emailService.js';
 
 const router = express.Router();
@@ -141,6 +142,53 @@ router.put('/careers/:id', auth, upload.single('image'), async (req, res, next) 
 router.delete('/careers/:id', auth, async (req, res, next) => {
   try {
     await Career.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Deleted' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ---------------- LIVE PROJECTS ---------------- 
+
+router.get('/live-projects', async (req, res, next) => {
+  try {
+    const projects = await LiveProject.find().sort({ date: -1 });
+    res.json(projects);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/live-projects', auth, async (req, res, next) => {
+  try {
+    const { title, githubLink, liveLink } = req.body;
+    const project = new LiveProject({ title, githubLink, liveLink });
+    await project.save();
+    res.status(201).json(project);
+  } catch (error) {
+    res.status(400);
+    next(error);
+  }
+});
+
+router.put('/live-projects/:id', auth, async (req, res, next) => {
+  try {
+    const { title, githubLink, liveLink } = req.body;
+    const project = await LiveProject.findByIdAndUpdate(
+      req.params.id, 
+      { title, githubLink, liveLink }, 
+      { new: true }
+    );
+    res.json(project);
+  } catch (error) {
+    res.status(400);
+    next(error);
+  }
+});
+
+router.delete('/live-projects/:id', auth, async (req, res, next) => {
+  try {
+    await LiveProject.findByIdAndDelete(req.params.id);
     res.json({ message: 'Deleted' });
   } catch (error) {
     next(error);
