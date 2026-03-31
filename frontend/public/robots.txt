@@ -1,40 +1,39 @@
-# Visiomatix Media - SEO Robots Configuration
-# Last Updated: 2026-03-13
+# 7xcoder - SEO Robots Configuration
+# Updated: 2026-03-31
 
 # Default rules for all bots
 User-agent: *
 Allow: /
+
+# Block sensitive areas
 Disallow: /admin/
 Disallow: /private/
-Disallow: /*.json$
 Disallow: /uploads/
+Disallow: /*.json$
 
-# Allow crawling of specific directories
+# Allow important assets
 Allow: /assets/
-Allow: /api/
 
-# Crawl delay (milliseconds)
-Crawl-delay: 1
-
-# Request rate
-Request-rate: 30/1m
-
-# Google specific
+# Google bot (no restrictions)
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 0
 
-# Bing specific
+# Bing bot
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
 
-# Block bad bots
+# Block unwanted bots (optional but good)
 User-agent: AhrefsBot
+Disallow: /
+
 User-agent: SemrushBot
-User-agent: DotBot
+Disallow: /
+
 User-agent: MJ12bot
 Disallow: /
 
+User-agent: DotBot
+Disallow: /
+
 # Sitemap location
-Sitemap: https://visiomatix.onrender.com/sitemap.xml
+Sitemap: https://7xcoder.com/sitemap.xml

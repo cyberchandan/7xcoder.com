@@ -1,186 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <!-- Main Pages -->
   <url>
-    <loc>https://visiomatix.onrender.com/</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://7xcoder.com/</loc>
+    <lastmod>2026-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+
   <url>
-    <loc>https://visiomatix.onrender.com/about</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://7xcoder.com/about</loc>
+    <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+
   <url>
-    <loc>https://visiomatix.onrender.com/contact</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://7xcoder.com/contact</loc>
+    <lastmod>2026-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
   <url>
-    <loc>https://visiomatix.onrender.com/blog</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://7xcoder.com/services</loc>
+    <lastmod>2026-03-31</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/career</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
 
-  <!-- Digital Marketing Services -->
+  <!-- Services -->
   <url>
-    <loc>https://visiomatix.onrender.com/services/digital-marketing</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/seo-content-writing</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/pay-per-click</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/email-influencer-marketing</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/content-video-marketing</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/analytics-roi</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/online-reputation-management</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/ecommerce-marketing</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://7xcoder.com/services/web-development</loc>
+    <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Web & App Development Services -->
   <url>
-    <loc>https://visiomatix.onrender.com/services/web-app-development</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/mobile-app-development</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/ecommerce-solutions</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/business-software-solutions</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/maintenance-support</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Design & Creative Services -->
-  <url>
-    <loc>https://visiomatix.onrender.com/services/design-creative</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/graphic-design</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/ui-ux-design</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/youtube-thumbnail-video</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/photography-videography</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/post-production</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/visual-effects-vfx</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/motion-graphics-animation</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/product-visualisation</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://7xcoder.com/services/app-development</loc>
+    <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Business & Strategy Services -->
   <url>
-    <loc>https://visiomatix.onrender.com/services/branding-strategy</loc>
-    <lastmod>2026-03-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://visiomatix.onrender.com/services/enterprise-internal-systems</loc>
-    <lastmod>2026-03-13</lastmod>
+    <loc>https://7xcoder.com/services/digital-marketing</loc>
+    <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
 </urlset>
